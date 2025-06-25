@@ -1,0 +1,73 @@
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #181818;
+  color: #ffffff;
+}
+
+.grid {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.row {
+  display: flex;
+}
+.grid-row {
+  display: flex;
+}
+
+.cell.user-path {
+  background-color: skyblue;
+}
+
+.cell.both-path {
+  background-color: #00ff00; /* parrot green */
+}
+
+.cell.wrong-user-path {
+  background-color: #ff4d4d; /* red */
+}
+
+.cell.optimal-path {
+  background-color: #00FA9A; /* dark green */
+}
+
+
+.cell {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #444; /* Slim, low-contrast border */
+  background-color: #2a2a2a;
+}
+
+.cell.wall {
+  background-color: #111;
+}
+
+.cell.start {
+  background-color: #5cb85c; /* Bootstrap success green */
+}
+
+.cell.end {
+  background-color: #d9534f; /* Bootstrap danger red */
+}
+
+
+
+
+
+
+
+button {
+  margin: 12px 6px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.result {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 18px;
+}
