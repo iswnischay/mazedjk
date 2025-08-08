@@ -71,7 +71,6 @@ function App() {
     setEndNode(null);
     setUserPath([]);
     setSelectionPhase('start');
-    // Reset stats to 0
     setOptimalPathLength(0);
     setAlgorithmRuntime(0);
     setNodesVisited(0);
@@ -101,7 +100,6 @@ function App() {
 
   const isAdjacent = (a, b) => Math.abs(a.row - b.row) + Math.abs(a.col - b.col) === 1;
 
-  // Your path count updates in real-time as the user draws
   const handleCellSelect = (cell) => {
     if (selectionPhase !== 'done' || cell.isWall || cell.isStart || cell.isEnd) return;
     const last = userPath.length ? userPath[userPath.length - 1] : startNode;
@@ -116,9 +114,10 @@ function App() {
   const handleMouseUp = () => setIsMouseDown(false);
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-  // --- MODIFIED ANIMATION FUNCTIONS ---
-
   const animateSearch = async (visitedNodesInOrder, totalRuntime) => {
+    // **FIX 1: Add a guard clause to prevent division by zero**
+    if (visitedNodesInOrder.length === 0) return;
+
     const runtimeIncrement = totalRuntime / visitedNodesInOrder.length;
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
       await sleep(ANIMATION_SPEED_MS);
@@ -126,7 +125,6 @@ function App() {
       setGrid(prevGrid => prevGrid.map(row => row.map(cell =>
         cell.row === node.row && cell.col === node.col ? { ...cell, isVisited: true } : cell
       )));
-      // Animate stats in real-time
       setNodesVisited(i + 1);
       setAlgorithmRuntime(prev => prev + runtimeIncrement);
     }
@@ -143,7 +141,6 @@ function App() {
         }
         return cell;
       })));
-      // Animate the shortest path steps count
       if (i > 0 && i < path.length - 1) {
         setOptimalPathLength(i);
       }
@@ -153,7 +150,6 @@ function App() {
   const visualizePath = async (comparison = false) => {
     if (!startNode || !endNode || isAnimating) return;
     setIsAnimating(true);
-    // Reset stats and visualizers before starting
     setOptimalPathLength(0);
     setAlgorithmRuntime(0);
     setNodesVisited(0);
@@ -164,11 +160,9 @@ function App() {
     const endTime = performance.now();
     const finalRuntime = endTime - startTime;
     
-    // Start animations
     await animateSearch(visitedNodesInOrder, finalRuntime);
     await animatePath(path, comparison);
 
-    // Set final, precise values to correct any minor floating point or timing discrepancies
     setAlgorithmRuntime(finalRuntime);
     setOptimalPathLength(path.length > 1 ? path.length - 2 : 0);
 
@@ -245,7 +239,7 @@ function App() {
           <hr />
           <div className="info-item">
             <span>Shortest Path (steps):</span>
-            <span className="info-value">{optimalPathLength > 0 || (startNode && endNode && optimalPathLength === 0) ? optimalPathLength : 'N/A'}</span>
+            <span className="info-value">{nodesVisited > 0 ? optimalPathLength : 'N/A'}</span>
           </div>
           <hr />
           <div className="info-item">
@@ -255,7 +249,8 @@ function App() {
           <hr />
           <div className="info-item">
             <span>Algorithm Runtime:</span>
-            <span className="info-value">{algorithmRuntime > 0 ? `${algorithmRuntime.toFixed(2)} ms` : 'N/A'}</span>
+            {/* **FIX 2: Change display condition to depend on nodesVisited** */}
+            <span className="info-value">{nodesVisited > 0 ? `${algorithmRuntime.toFixed(2)} ms` : 'N/A'}</span>
           </div>
         </div>
       </div>
